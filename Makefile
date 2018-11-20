@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_SERIALPORT_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I../Qt5.11.2/5.11.2/gcc_64/include -I../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I../Qt5.11.2/5.11.2/gcc_64/include/QtGui -I../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I../Qt5.11.2/5.11.2/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I../Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++
+INCPATH       = -I. -I../Qt5.11.2/5.11.2/gcc_64/include -I../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I../Qt5.11.2/5.11.2/gcc_64/include/QtQuick -I../Qt5.11.2/5.11.2/gcc_64/include/QtGui -I../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I../Qt5.11.2/5.11.2/gcc_64/include/QtQml -I../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork -I../Qt5.11.2/5.11.2/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I../Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = terminal1.0.0
 DISTDIR = /home/bitohw03/workspace/terminal/.tmp/terminal1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5SerialPort -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/lib -lQt5Widgets -lQt5Quick -lQt5Gui -lQt5SerialPort -lQt5Qml -lQt5Network -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -53,19 +53,27 @@ OBJECTS_DIR   = ./
 SOURCES       = main.cpp \
 		mainwindow.cpp \
 		settingsdialog.cpp \
-		console.cpp qrc_terminal.cpp \
+		console.cpp \
+		gyro.cpp qrc_terminal.cpp \
 		moc_mainwindow.cpp \
 		moc_settingsdialog.cpp \
-		moc_console.cpp
+		moc_console.cpp \
+		moc_gyro.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		settingsdialog.o \
 		console.o \
+		gyro.o \
 		qrc_terminal.o \
 		moc_mainwindow.o \
 		moc_settingsdialog.o \
-		moc_console.o
-DIST          = ../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/spec_pre.prf \
+		moc_console.o \
+		moc_gyro.o
+DIST          = attitude.qml \
+		glcode.js \
+		three.js \
+		scatter3d.qml \
+		../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../Qt5.11.2/5.11.2/gcc_64/mkspecs/common/unix.conf \
 		../Qt5.11.2/5.11.2/gcc_64/mkspecs/common/linux.conf \
 		../Qt5.11.2/5.11.2/gcc_64/mkspecs/common/sanitize.conf \
@@ -256,10 +264,12 @@ DIST          = ../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/lex.prf \
 		terminal.pro mainwindow.h \
 		settingsdialog.h \
-		console.h main.cpp \
+		console.h \
+		gyro.h main.cpp \
 		mainwindow.cpp \
 		settingsdialog.cpp \
-		console.cpp
+		console.cpp \
+		gyro.cpp
 QMAKE_TARGET  = terminal
 DESTDIR       = 
 TARGET        = terminal
@@ -463,8 +473,11 @@ Makefile: terminal.pro ../Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++/qmake.conf ..
 		terminal.pro \
 		terminal.qrc \
 		../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Widgets.prl \
+		../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Quick.prl \
 		../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Gui.prl \
 		../Qt5.11.2/5.11.2/gcc_64/lib/libQt5SerialPort.prl \
+		../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Qml.prl \
+		../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Network.prl \
 		../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Core.prl
 	$(QMAKE) -o Makefile terminal.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 ../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/spec_pre.prf:
@@ -659,8 +672,11 @@ Makefile: terminal.pro ../Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++/qmake.conf ..
 terminal.pro:
 terminal.qrc:
 ../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Widgets.prl:
+../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Quick.prl:
 ../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Gui.prl:
 ../Qt5.11.2/5.11.2/gcc_64/lib/libQt5SerialPort.prl:
+../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Qml.prl:
+../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Network.prl:
 ../Qt5.11.2/5.11.2/gcc_64/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile terminal.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
@@ -678,8 +694,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents terminal.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h settingsdialog.h console.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp settingsdialog.cpp console.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h settingsdialog.h console.h gyro.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp settingsdialog.cpp console.cpp gyro.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui settingsdialog.ui $(DISTDIR)/
 
 
@@ -709,6 +725,8 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_terminal.cpp
 qrc_terminal.cpp: terminal.qrc \
 		../Qt5.11.2/5.11.2/gcc_64/bin/rcc \
+		scatter3d.qml \
+		attitude.qml \
 		images/application-exit.png \
 		images/disconnect.png \
 		images/clear.png \
@@ -722,9 +740,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: ../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h ../Qt5.11.2/5.11.2/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_settingsdialog.cpp moc_console.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_settingsdialog.cpp moc_console.cpp moc_gyro.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_settingsdialog.cpp moc_console.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_settingsdialog.cpp moc_console.cpp moc_gyro.cpp
 moc_mainwindow.cpp: ../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QMainWindow \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qmainwindow.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -834,10 +852,49 @@ moc_mainwindow.cpp: ../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QMainWindow \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/QSerialPort \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/qserialport.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/qserialportglobal.h \
+		gyro.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/QQuickView \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickview.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquickglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqmlglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqml-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquick-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgrendererinterface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgnode.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsggeometry.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qt_windows.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengles2ext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopenglext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRectF \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/QMatrix4x4 \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector3d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector4d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qquaternion.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QObject \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QEvent \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QMargins \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRect \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqml.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlprivate.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlparserstatus.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmllist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmetaobject.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmldebug.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QString \
 		mainwindow.h \
 		moc_predefs.h \
 		../Qt5.11.2/5.11.2/gcc_64/bin/moc
-	/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/moc $(DEFINES) --include /home/bitohw03/workspace/terminal/moc_predefs.h -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++ -I/home/bitohw03/workspace/terminal -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtGui -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+	/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/moc $(DEFINES) --include /home/bitohw03/workspace/terminal/moc_predefs.h -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++ -I/home/bitohw03/workspace/terminal -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQuick -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtGui -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQml -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtNetwork -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
 
 moc_settingsdialog.cpp: ../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QDialog \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qdialog.h \
@@ -949,7 +1006,7 @@ moc_settingsdialog.cpp: ../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QDialog \
 		settingsdialog.h \
 		moc_predefs.h \
 		../Qt5.11.2/5.11.2/gcc_64/bin/moc
-	/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/moc $(DEFINES) --include /home/bitohw03/workspace/terminal/moc_predefs.h -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++ -I/home/bitohw03/workspace/terminal -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtGui -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include settingsdialog.h -o moc_settingsdialog.cpp
+	/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/moc $(DEFINES) --include /home/bitohw03/workspace/terminal/moc_predefs.h -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++ -I/home/bitohw03/workspace/terminal -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQuick -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtGui -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQml -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtNetwork -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include settingsdialog.h -o moc_settingsdialog.cpp
 
 moc_console.cpp: ../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QPlainTextEdit \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qplaintextedit.h \
@@ -1071,7 +1128,144 @@ moc_console.cpp: ../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QPlainTextEdit \
 		console.h \
 		moc_predefs.h \
 		../Qt5.11.2/5.11.2/gcc_64/bin/moc
-	/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/moc $(DEFINES) --include /home/bitohw03/workspace/terminal/moc_predefs.h -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++ -I/home/bitohw03/workspace/terminal -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtGui -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include console.h -o moc_console.cpp
+	/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/moc $(DEFINES) --include /home/bitohw03/workspace/terminal/moc_predefs.h -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++ -I/home/bitohw03/workspace/terminal -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQuick -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtGui -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQml -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtNetwork -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include console.h -o moc_console.cpp
+
+moc_gyro.cpp: ../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/QQuickView \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickview.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquickglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqmlglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qconfig.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qtcore-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsystemdetection.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qprocessordetection.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qtypeinfo.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsysinfo.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qlogging.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qflags.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qbasicatomic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qgenericatomic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qglobalstatic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmutex.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qnumeric.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qversiontagging.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqml-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtguiglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtgui-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquick-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgrendererinterface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgnode.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsggeometry.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qt_windows.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengles2ext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopenglext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRectF \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qrect.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmargins.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qnamespace.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsize.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qpoint.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/QMatrix4x4 \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector3d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmetatype.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qbytearray.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qrefcount.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qarraydata.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qalgorithms.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobjectdefs.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector4d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qquaternion.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qdebug.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qhash.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qchar.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qiterator.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qlist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qhashfunctions.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstring.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringliteral.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringview.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringbuilder.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qpair.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qbytearraylist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringlist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qregexp.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringmatcher.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmap.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qtextstream.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qiodevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobject.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcoreevent.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qscopedpointer.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobject_impl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qlocale.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qvariant.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qshareddata.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qvector.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qset.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsharedpointer.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qdatastream.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QObject \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QEvent \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QMargins \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRect \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindowdefs.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qicon.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpixmap.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpaintdevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qcolor.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qrgb.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qrgba64.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qimage.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpixelformat.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtransform.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qmatrix.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpolygon.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qregion.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qline.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpainterpath.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qcursor.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qevent.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qkeysequence.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qurl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qurlquery.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qfile.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qfiledevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector2d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtouchdevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqml.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlprivate.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlparserstatus.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmllist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmetaobject.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmldebug.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QString \
+		gyro.h \
+		moc_predefs.h \
+		../Qt5.11.2/5.11.2/gcc_64/bin/moc
+	/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/bin/moc $(DEFINES) --include /home/bitohw03/workspace/terminal/moc_predefs.h -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/mkspecs/linux-g++ -I/home/bitohw03/workspace/terminal -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtWidgets -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQuick -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtGui -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtQml -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtNetwork -I/home/bitohw03/workspace/Qt5.11.2/5.11.2/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include gyro.h -o moc_gyro.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -1208,6 +1402,45 @@ main.o: main.cpp mainwindow.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/QSerialPort \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/qserialport.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/qserialportglobal.h \
+		gyro.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/QQuickView \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickview.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquickglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqmlglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqml-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquick-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgrendererinterface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgnode.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsggeometry.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qt_windows.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengles2ext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopenglext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRectF \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/QMatrix4x4 \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector3d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector4d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qquaternion.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QObject \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QEvent \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QMargins \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRect \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqml.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlprivate.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlparserstatus.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmllist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmetaobject.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmldebug.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QString \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QApplication \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qapplication.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1327,6 +1560,45 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/QSerialPort \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/qserialport.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtSerialPort/qserialportglobal.h \
+		gyro.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/QQuickView \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickview.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquickglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqmlglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqml-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquick-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgrendererinterface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgnode.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsggeometry.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qt_windows.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengles2ext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopenglext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRectF \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/QMatrix4x4 \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector3d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector4d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qquaternion.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QObject \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QEvent \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QMargins \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRect \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqml.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlprivate.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlparserstatus.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmllist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmetaobject.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmldebug.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QString \
 		ui_mainwindow.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QVariant \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QAction \
@@ -1375,7 +1647,15 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QLabel \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qlabel.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/QMessageBox \
-		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qmessagebox.h
+		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qmessagebox.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/QQmlEngine \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlengine.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qjsengine.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qjsvalue.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlerror.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/QQmlContext \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlcontext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QMetaObject
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 settingsdialog.o: settingsdialog.cpp settingsdialog.h \
@@ -1662,6 +1942,150 @@ console.o: console.cpp console.h \
 		../Qt5.11.2/5.11.2/gcc_64/include/QtWidgets/qabstractslider.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o console.o console.cpp
 
+gyro.o: gyro.cpp gyro.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/QQuickView \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickview.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qquickwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquickglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqmlglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qconfig.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qtcore-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsystemdetection.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qprocessordetection.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qtypeinfo.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsysinfo.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qlogging.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qflags.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qbasicatomic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qgenericatomic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qglobalstatic.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmutex.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qnumeric.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qversiontagging.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qtqml-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtguiglobal.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtgui-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qtquick-config.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgrendererinterface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsgnode.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQuick/qsggeometry.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qt_windows.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopengles2ext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qopenglext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRectF \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qrect.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmargins.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qnamespace.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsize.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qpoint.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/QMatrix4x4 \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qmatrix4x4.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector3d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmetatype.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qbytearray.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qrefcount.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qarraydata.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qalgorithms.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobjectdefs.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector4d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qquaternion.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qgenericmatrix.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qdebug.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qhash.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qchar.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qiterator.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qlist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qhashfunctions.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstring.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringliteral.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringview.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringbuilder.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qpair.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qbytearraylist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringlist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qregexp.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qstringmatcher.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmap.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qtextstream.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qiodevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobject.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcoreevent.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qscopedpointer.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qobject_impl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qlocale.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qvariant.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qshareddata.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qvector.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qset.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsharedpointer.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qdatastream.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindow.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QObject \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QEvent \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QMargins \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QRect \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurface.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qsurfaceformat.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindowdefs.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qicon.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpixmap.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpaintdevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qcolor.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qrgb.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qrgba64.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qimage.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpixelformat.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtransform.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qmatrix.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpolygon.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qregion.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qline.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qpainterpath.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qcursor.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qevent.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qkeysequence.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qurl.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qurlquery.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qfile.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qfiledevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qvector2d.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtGui/qtouchdevice.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqml.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlprivate.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlparserstatus.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmllist.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/qmetaobject.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmldebug.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QString \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/QQmlEngine \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlengine.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qjsengine.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qjsvalue.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlerror.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/QQmlContext \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtQml/qqmlcontext.h \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QMetaObject \
+		../Qt5.11.2/5.11.2/gcc_64/include/QtCore/QtDebug
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o gyro.o gyro.cpp
+
 qrc_terminal.o: qrc_terminal.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_terminal.o qrc_terminal.cpp
 
@@ -1674,20 +2098,14 @@ moc_settingsdialog.o: moc_settingsdialog.cpp
 moc_console.o: moc_console.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_console.o moc_console.cpp
 
+moc_gyro.o: moc_gyro.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_gyro.o moc_gyro.cpp
+
 ####### Install
 
-install_target: first FORCE
-	@test -d $(INSTALL_ROOT)/home/bitohw03/workspace/Qt5.11.2/Examples/Qt-5.11.2/serialport/terminal || mkdir -p $(INSTALL_ROOT)/home/bitohw03/workspace/Qt5.11.2/Examples/Qt-5.11.2/serialport/terminal
-	-$(QINSTALL_PROGRAM) $(QMAKE_TARGET) $(INSTALL_ROOT)/home/bitohw03/workspace/Qt5.11.2/Examples/Qt-5.11.2/serialport/terminal/$(QMAKE_TARGET)
+install:  FORCE
 
-uninstall_target: FORCE
-	-$(DEL_FILE) $(INSTALL_ROOT)/home/bitohw03/workspace/Qt5.11.2/Examples/Qt-5.11.2/serialport/terminal/$(QMAKE_TARGET)
-	-$(DEL_DIR) $(INSTALL_ROOT)/home/bitohw03/workspace/Qt5.11.2/Examples/Qt-5.11.2/serialport/terminal/ 
-
-
-install: install_target  FORCE
-
-uninstall: uninstall_target  FORCE
+uninstall:  FORCE
 
 FORCE:
 

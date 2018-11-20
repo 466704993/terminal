@@ -57,6 +57,10 @@
 #include <QLabel>
 #include <QMessageBox>
 
+#include "QQmlEngine"
+#include <QQmlContext>
+#include <QMetaObject>
+
 //! [0]
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -78,9 +82,23 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->actionQuit->setEnabled(true);
     m_ui->actionConfigure->setEnabled(true);
 
+    QAction *fileGyroAction = new QAction("&Gyro...", this);
+    m_ui->mainToolBar->addAction(fileGyroAction);
+
     m_ui->statusBar->addWidget(m_status);
 
     initActionsConnections();
+
+    m_view->setWidth(640);
+    m_view->setHeight(360);
+    connect(fileGyroAction, &QAction::triggered, m_view, &QQuickView::show);
+
+    QQuickView *view = new QQuickView();
+    view->setWidth(640);
+    view->setHeight(360);
+    view->engine()->rootContext()->setContextProperty("gyro", m_view);
+    view->setSource(QUrl::fromLocalFile("scatter3d.qml"));
+    connect(fileGyroAction, &QAction::triggered, view, &QQuickView::show);
 
     connect(m_serial, &QSerialPort::errorOccurred, this, &MainWindow::handleError);
 
@@ -94,6 +112,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete m_view;
     delete m_settings;
     delete m_ui;
 }
@@ -158,6 +177,8 @@ void MainWindow::readData()
 {
     const QByteArray data = m_serial->readAll();
     m_console->putData(data);
+    m_view->putData(data);
+
 }
 //! [7]
 

@@ -54,6 +54,7 @@
 
 #include <QMainWindow>
 #include <QSerialPort>
+#include "gyro.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -96,6 +97,7 @@ private:
     Console *m_console = nullptr;
     SettingsDialog *m_settings = nullptr;
     QSerialPort *m_serial = nullptr;
+    Gyro  *m_view = new Gyro;
 };
 
 #endif // MAINWINDOW_H
