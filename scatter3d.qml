@@ -22,6 +22,12 @@ import QtDataVisualization 1.2
               }
           }
       }
+      MouseArea {
+           anchors.fill: parent
+           onClicked:{
+            dataModel.clear();
+           }
+      }
  /*     Timer{
          interval: 100;
          running: true;

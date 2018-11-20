@@ -13,7 +13,7 @@ function initializeGL(canvas) {
 
     scene = new THREE.Scene();
 
-    geometry = new THREE.PlaneGeometry(1000,1000,5,5);
+    geometry = new THREE.PlaneGeometry(1200,1200,5,5);
  //   geometry = new THREE.BoxGeometry( 1000, 1, 1000 ,10,10,10);
     material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
     mesh = new THREE.Mesh( geometry, material );
